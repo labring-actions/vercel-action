@@ -32534,6 +32534,7 @@ const { context } = github;
 const githubToken = core.getInput('github-token');
 const githubComment = getGithubCommentInput();
 const workingDirectory = core.getInput('working-directory');
+const gitDirectory = core.getInput('git-directory');
 const prNumberRegExp = /{{\s*PR_NUMBER\s*}}/g;
 const branchRegExp = /{{\s*BRANCH\s*}}/g;
 
@@ -32917,6 +32918,11 @@ async function run() {
   await setEnv();
 
   let commit = execSync('git log -1 --pretty=format:%B')
+  const options = {};
+  if (gitDirectory) {
+    options.cwd = gitDirectory;
+  }
+  let commit = execSync('git log -1 --pretty=format:%B', options)
     .toString()
     .trim();
   if (github.context.eventName === 'push') {
